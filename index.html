@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página HTML5 con Gráfico de Pastel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        p, table {
+            font-size: 16px;
+            color: #34495e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #ecf0f1;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+    <h1>Mi Página HTML5</h1>
+    <p><strong>Nombre Completo:</strong> Juan Diego Gonzalez Paez</p>
+    <p><strong>Código:</strong> 2216645</p>
+    <p><strong>Ejemplo de Ecuación:</strong> 
+        <br>
+        \[
+        \frac{\sqrt{\arccos(0.5) + \arcsin(0.2)}}{\sqrt{\ln(2) + \frac{\ln(3)}{\arccos(0.7)}}} + \frac{\arccos(0.4) \cdot \arcsin(0.6)}{\sqrt{5}} - \frac{7}{\sqrt{\arccos(0.6) + \arcsin(0.3)}}
+        \]
+    </p>
+
+    <button onclick="procesar()">Procesar</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tipo de Error</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total de errores de arcoseno</td>
+                <td id="errores_arcsin">0</td>
+            </tr>
+            <tr>
+                <td>Total de errores de arcocoseno</td>
+                <td id="errores_arccos">0</td>
+            </tr>
+            <tr>
+                <td>Total de errores de raíz cuadrada</td>
+                <td id="errores_sqrt">0</td>
+            </tr>
+            <tr>
+                <td>Total de errores de división</td>
+                <td id="errores_div">0</td>
+            </tr>
+            <tr>
+                <td>Total de errores de logaritmo natural</td>
+                <td id="errores_ln">0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="piechart" style="width: 900px; height: 500px; margin-top: 20px;"></div>
+
+    <script>
+        // Cargar Google Charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        let errores_arcsin = 0;
+        let errores_arccos = 0;
+        let errores_sqrt = 0;
+        let errores_div = 0;
+        let errores_ln = 0;
+
+        function procesar() {
+            const ciclos = 1000;
+
+            // Reiniciar contadores
+            errores_arcsin = 0;
+            errores_arccos = 0;
+            errores_sqrt = 0;
+            errores_div = 0;
+            errores_ln = 0;
+
+            for (let i = 0; i < ciclos; i++) {
+                // Genera valores aleatorios para las variables entre -1 y 1
+                let x1 = Math.random() * 2 - 1;
+                let x2 = Math.random() * 2 - 1;
+                let x3 = Math.random() * 2 - 1;
+                let x4 = Math.random() * 2 - 1;
+                let x5 = Math.random() * 2 - 1;
+
+                // Arcoseno
+                try {
+                    let result_arcsin = Math.asin(x1);
+                    if (isNaN(result_arcsin)) throw "Error";
+                } catch {
+                    errores_arcsin++;
+                }
+
+                // Arcocoseno
+                try {
+                    let result_arccos = Math.acos(x2);
+                    if (isNaN(result_arccos)) throw "Error";
+                } catch {
+                    errores_arccos++;
+                }
+
+                // Raíz cuadrada
+                try {
+                    let result_sqrt = Math.sqrt(x3);
+                    if (isNaN(result_sqrt) || x3 < 0) throw "Error";
+                } catch {
+                    errores_sqrt++;
+                }
+
+                // División
+                try {
+                    let result_div = x4 / x5;
+                    if (isNaN(result_div) || x5 === 0) throw "Error";
+                } catch {
+                    errores_div++;
+                }
+
+                // Logaritmo natural
+                try {
+                    let result_ln = Math.log(x4);
+                    if (isNaN(result_ln) || x4 <= 0) throw "Error";
+                } catch {
+                    errores_ln++;
+                }
+            }
+
+            // Actualizar la tabla con los resultados
+            document.getElementById("errores_arcsin").textContent = errores_arcsin;
+            document.getElementById("errores_arccos").textContent = errores_arccos;
+            document.getElementById("errores_sqrt").textContent = errores_sqrt;
+            document.getElementById("errores_div").textContent = errores_div;
+            document.getElementById("errores_ln").textContent = errores_ln;
+
+            // Dibujar el gráfico de pastel
+            drawChart();
+        }
+
+        function drawChart() {
+            var data = google.visualization.arrayToDataTable([
+                ['Tipo de Error', 'Total'],
+                ['Errores de Arcoseno', errores_arcsin],
+                ['Errores de Arcocoseno', errores_arccos],
+                ['Errores de Raíz Cuadrada', errores_sqrt],
+                ['Errores de División', errores_div],
+                ['Errores de Logaritmo Natural', errores_ln]
+            ]);
+
+            var options = {
+                title: 'Distribución de Errores',
+                is3D: true,
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(data, options);
+        }
+    </script>
+</body>
+</html>
