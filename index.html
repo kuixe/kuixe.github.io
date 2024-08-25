@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página HTML5 con Gráfico de Pastel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        p, table {
+            font-size: 16px;
+            color: #34495e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #bdc3c7;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #ecf0f1;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+</head>
+<body>
+    <h1>Mi Página HTML5</h1>
+    <p><strong>Nombre Completo:</strong> Juan Diego Gonzalez Paez</p>
+    <p><strong>Código:</strong> 2216645</p>
+    <p><strong>Ejemplo de Ecuación:</strong> 
+        <br>
+        \[
+        Y = \frac{\arccos(x - y) + \sqrt{y \cdot \arcsin(z)} + \ln(u)}{\sqrt{\arccos(w) + \frac{v}{\arcsin(x)}}} + \frac{\ln(v + \sqrt{w})}{\arcsin(x \cdot y) + \frac{\arccos(z)}{\sqrt{u - v}}}
+        \]
+    </p>
+
+    <button onclick="procesar()">Procesar</button>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tipo de Error</th>
+                <th>Total</th>
+                <th>Porcentaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Total de errores de arcoseno</td>
+                <td id="errores_arcsin">0</td>
+                <td id="porcentaje_arcsin">0%</td>
+            </tr>
+            <tr>
+                <td>Total de errores de arcocoseno</td>
+                <td id="errores_arccos">0</td>
+                <td id="porcentaje_arccos">0%</td>
+            </tr>
+            <tr>
+                <td>Total de errores de raíz cuadrada</td>
+                <td id="errores_sqrt">0</td>
+                <td id="porcentaje_sqrt">0%</td>
+            </tr>
+            <tr>
+                <td>Total de errores de división</td>
+                <td id="errores_div">0</td>
+                <td id="porcentaje_div">0%</td>
+            </tr>
+            <tr>
+                <td>Total de errores de logaritmo natural</td>
+                <td id="errores_ln">0</td>
+                <td id="porcentaje_ln">0%</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div id="piechart" style="width: 900px; height: 500px; margin-top: 20px;"></div>
+
+    <script>
+        // Cargar Google Charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        let errores_arcsin = 0;
+        let errores_arccos = 0;
+        let errores_sqrt = 0;
+        let errores_div = 0;
+        let errores_ln = 0;
+
+        let aciertos_arcsin = 0;
+        let aciertos_arccos = 0;
+        let aciertos_sqrt = 0;
+        let aciertos_div = 0;
+        let aciertos_ln = 0;
+
+        function procesar() {
+            const ciclos = 1000;
+
+            // Reiniciar contadores
+            errores_arcsin = 0;
+            errores_arccos = 0;
+            errores_sqrt = 0;
+            errores_div = 0;
+            errores_ln = 0;
+
+            aciertos_arcsin = 0;
+            aciertos_arccos = 0;
+            aciertos_sqrt = 0;
+            aciertos_div = 0;
+            aciertos_ln = 0;
+
+            for (let i = 0; i < ciclos; i++) {
+                // Genera valores aleatorios para las variables entre -1 y 1
+                let x = Math.random() * 2 - 1;
+                let y = Math.random() * 2 - 1;
+                let z = Math.random() * 2 - 1;
+                let u = Math.random() * 2 - 1;
+                let v = Math.random() * 2 - 1;
+                let w = Math.random() * 2 - 1;
+
+                // Arcoseno
+                try {
+                    if (z >= -1 && z <= 1 && x * y >= -1 && x * y <= 1) {
+                        let result_arcsin1 = Math.asin(z);
+                        let result_arcsin2 = Math.asin(x * y);
+                        aciertos_arcsin++;
+                    } else {
+                        throw "Valor fuera de rango para Math.asin";
+                    }
+                } catch {
+                    errores_arcsin++;
+                    console.error(`Error en Arcoseno: z=${z}, x*y=${x*y}`);
+                }
+
+                // Arcocoseno
+                try {
+                    if (x - y >= -1 && x - y <= 1 && w >= -1 && w <= 1 && z >= -1 && z <= 1) {
+                        let result_arccos1 = Math.acos(x - y);
+                        let result_arccos2 = Math.acos(w);
+                        let result_arccos3 = Math.acos(z);
+                        aciertos_arccos++;
+                    } else {
+                        throw "Valor fuera de rango para Math.acos";
+                    }
+                } catch {
+                    errores_arccos++;
+                    console.error(`Error en Arcocoseno: x-y=${x-y}, w=${w}, z=${z}`);
+                }
+
+                // Raíz cuadrada
+                try {
+                    if (y * Math.asin(z) >= 0 && Math.acos(w) + v / Math.asin(x) >= 0 && u - v >= 0) {
+                        let result_sqrt1 = Math.sqrt(y * Math.asin(z));
+                        let result_sqrt2 = Math.sqrt(Math.acos(w) + v / Math.asin(x));
+                        let result_sqrt3 = Math.sqrt(u - v);
+                        aciertos_sqrt++;
+                    } else {
+                        throw "Valor fuera de rango para Math.sqrt";
+                    }
+                } catch {
+                    errores_sqrt++;
+                    console.error(`Error en Raíz Cuadrada: y*asin(z)=${y*Math.asin(z)}, acos(w)+v/asin(x)=${Math.acos(w)+v/Math.asin(x)}, u-v=${u-v}`);
+                }
+
+                // División
+                try {
+                    let denom1 = Math.sqrt(u - v);
+                    let denom2 = Math.asin(x);
+                    if (denom1 !== 0 && denom2 !== 0) {
+                        let result_div1 = Math.acos(w) / denom1;
+                        let result_div2 = v / denom2;
+                        let result_div3 = Math.log(v + Math.sqrt(w)) / (Math.asin(x * y) + result_div1);
+                        if (isNaN(result_div1) || isNaN(result_div2) || isNaN(result_div3)) throw "Error";
+                        aciertos_div++;
+                    } else {
+                        throw "División por cero";
+                    }
+                } catch {
+                    errores_div++;
+                    console.error(`Error en División: acos(w)/sqrt(u-v)=${Math.acos(w)/Math.sqrt(u-v)}, v/asin(x)=${v/Math.asin(x)}, ln(v+sqrt(w))/(asin(x*y)+acos(w)/sqrt(u-v))=${Math.log(v+Math.sqrt(w))/(Math.asin(x*y)+Math.acos(w)/Math.sqrt(u-v))}`);
+                }
+
+                // Logaritmo natural
+                try {
+                    if (u > 0 && v + Math.sqrt(w) > 0) {
+                        let result_ln1 = Math.log(u);
+                        let result_ln2 = Math.log(v + Math.sqrt(w));
+                        aciertos_ln++;
+                    } else {
+                        throw "Valor no positivo para Math.log";
+                    }
+                } catch {
+                    errores_ln++;
+                    console.error(`Error en Logaritmo Natural: ln(u)=${Math.log(u)}, ln(v+sqrt(w))=${Math.log(v+Math.sqrt(w))}`);
+                }
+            }
+
+            // Calcular porcentaje de errores
+            let totalErrores = errores_arcsin + errores_arccos + errores_sqrt + errores_div + errores_ln;
+
+            // Actualizar la tabla con los valores de errores y porcentajes
+            document.getElementById('errores_arcsin').textContent = errores_arcsin;
+            document.getElementById('errores_arccos').textContent = errores_arccos;
+            document.getElementById('errores_sqrt').textContent = errores_sqrt;
+            document.getElementById('errores_div').textContent = errores_div;
+            document.getElementById('errores_ln').textContent = errores_ln;
+
+            document.getElementById('porcentaje_arcsin').textContent = totalErrores ? ((errores_arcsin / totalErrores) * 100).toFixed(2) + "%" : "0%";
+            document.getElementById('porcentaje_arccos').textContent = totalErrores ? ((errores_arccos / totalErrores) * 100).toFixed(2) + "%" : "0%";
+            document.getElementById('porcentaje_sqrt').textContent = totalErrores ? ((errores_sqrt / totalErrores) * 100).toFixed(2) + "%" : "0%";
+            document.getElementById('porcentaje_div').textContent = totalErrores ? ((errores_div / totalErrores) * 100).toFixed(2) + "%" : "0%";
+            document.getElementById('porcentaje_ln').textContent = totalErrores ? ((errores_ln / totalErrores) * 100).toFixed(2) + "%" : "0%";
+
+            drawChart();
+        }
+
+        function drawChart() {
+            const data = google.visualization.arrayToDataTable([
+                ['Tipo de Error', 'Cantidad'],
+                ['Arcoseno', errores_arcsin],
+                ['Arcocoseno', errores_arccos],
+                ['Raíz Cuadrada', errores_sqrt],
+                ['División', errores_div],
+                ['Logaritmo Natural', errores_ln]
+            ]);
+
+            const options = {
+                title: 'Distribución de Errores',
+                pieSliceText: 'label',
+                slices: {
+                    0: {offset: 0.1},
+                    1: {offset: 0.1},
+                    2: {offset: 0.1},
+                    3: {offset: 0.1},
+                    4: {offset: 0.1}
+                }
+            };
+
+            const chart = new google.visualization.PieChart(document.getElementById('piechart'));
+            chart.draw(data, options);
+        }
+    </script>
+</body>
+</html>
